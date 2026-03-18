@@ -1,144 +1,78 @@
-let surahs = JSON.parse(localStorage.getItem("quranData") || "null");
+let Quran = [];
 
-// DOWNLOAD ALL 114 SURAHS
-document.getElementById("downloadBtn").onclick = async () => {
+// LOAD QURAN
+async function loadQuran() {
+  alert("Downloading full Quran... ⏳");
+  try {
+    const res = await fetch("https://api.alquran.cloud/v1/quran/quran-uthmani");
+    const data = await res.json();
+    if(!data.data || data.data.surahs.length!==114) throw new Error("Incomplete data");
 
-  alert("Downloading Quran...");
-
-  let all = [];
-
-  for(let i=1;i<=114;i++){
-
-    let ar = await fetch(`https://api.alquran.cloud/v1/surah/${i}/ar.alafasy`).then(r=>r.json());
-    let en = await fetch(`https://api.alquran.cloud/v1/surah/${i}/en.asad`).then(r=>r.json());
-
-    let ayahs = ar.data.ayahs.map((a,index)=>({
-      text:a.text,
-      translation:en.data.ayahs[index].text,
-      audio:a.audio
-    }));
-
-    all.push({
-      number:i,
-      name:ar.data.englishName,
-      ayahs
-    });
-
-    console.log("Downloaded",i);
+    Quran = data.data.surahs.map(s => ({number:s.number,name:s.englishName,ayahs:s.ayahs}));
+    localStorage.setItem("quran",JSON.stringify(Quran));
+    alert("✅ FULL Quran Loaded (114 Surahs)");
+    showSurahs(Quran);
+  } catch(e) {
+    alert("❌ Download failed or incomplete. Try again.");
   }
-
-  localStorage.setItem("quranData",JSON.stringify(all));
-  alert("Done! Reload page.");
-};
-
-// LOAD LIST
-if(surahs){
-displaySurahs();
 }
 
-function displaySurahs(){
-let list=document.getElementById("surahList");
-list.innerHTML="";
-
-surahs.forEach(s=>{
-let btn=document.createElement("button");
-btn.className="surahButton";
-btn.textContent=s.number+" - "+s.name;
-btn.onclick=()=>loadSurah(s.number);
-list.appendChild(btn);
-});
+// SHOW SURAH LIST
+function showSurahs(data){
+  document.querySelector(".center").style.display="none";
+  const list=document.getElementById("surahList"); list.innerHTML="";
+  data.forEach(s=>{
+    list.innerHTML+=`<div class="surah" onclick="openSurah(${s.number})">${s.number}. ${s.name}</div>`;
+  });
 }
 
-// LOAD SURAH
-function loadSurah(num){
-
-let s=surahs.find(x=>x.number===num);
-
-localStorage.setItem("lastRead",num);
-
-let reader=document.getElementById("reader");
-reader.innerHTML="";
-
-s.ayahs.forEach((a,i)=>{
-
-let div=document.createElement("div");
-div.className="ayah";
-
-div.innerHTML=`
-<div class="arabic">${a.text}</div>
-<div class="translation">${a.translation}</div>
-
-<audio controls src="${a.audio}"></audio>
-
-<button onclick="bookmark(${num},${i})">⭐</button>
-<button onclick="toggleMem(this)">🧠</button>
-`;
-
-let audio=div.querySelector("audio");
-
-audio.onplay=()=>{
-document.querySelectorAll(".ayah").forEach(x=>x.classList.remove("highlight"));
-div.classList.add("highlight");
-};
-
-div.querySelector(".arabic").onclick=()=>{
-alert(a.text.split(" ").join(" | "));
-};
-
-reader.appendChild(div);
-
-});
-
+// OPEN SURAH
+function openSurah(num){
+  const surah = Quran.find(s=>s.number===num);
+  const content=document.getElementById("content");
+  if(!surah){content.innerHTML="❌ Download Quran first"; return;}
+  localStorage.setItem("lastRead",num);
+  content.innerHTML=`<h2>${surah.name}</h2>`;
+  surah.ayahs.forEach(a=>{
+    content.innerHTML+=`
+      <div class="ayah">
+        <p class="arabic">${a.text}</p>
+        <p class="translation">${a.text}</p>
+        <button onclick="play(${num},${a.numberInSurah})">▶</button>
+        <button onclick="bookmark(${num},${a.numberInSurah})">⭐</button>
+      </div>`;
+  });
+  closeSidebar();
 }
+
+// AUDIO
+function play(surah,ayah){new Audio(`https://cdn.islamic.network/quran/audio/128/ar.alafasy/${surah}${ayah}.mp3`).play();}
 
 // BOOKMARK
 function bookmark(surah,ayah){
-let b=JSON.parse(localStorage.getItem("bookmarks")||"[]");
-b.push({surah,ayah});
-localStorage.setItem("bookmarks",JSON.stringify(b));
-alert("Saved ⭐");
+  let marks=JSON.parse(localStorage.getItem("marks")||"[]");
+  marks.push({surah,ayah});
+  localStorage.setItem("marks",JSON.stringify(marks));
+  alert("Bookmarked ⭐");
 }
 
-// MEMORIZATION
-function toggleMem(btn){
-let a=btn.parentElement.querySelector(".arabic");
-a.style.visibility=(a.style.visibility==="hidden")?"visible":"hidden";
+// SIDEBAR
+function openSidebar(){document.getElementById("sidebar").classList.add("active");document.getElementById("overlay").classList.add("active");}
+function closeSidebar(){document.getElementById("sidebar").classList.remove("active");document.getElementById("overlay").classList.remove("active");}
+function showHome(){document.getElementById("content").innerHTML="";closeSidebar();}
+function showBookmarks(){
+  const marks=JSON.parse(localStorage.getItem("marks")||"[]");const content=document.getElementById("content");
+  content.innerHTML="<h2>Bookmarks ⭐</h2>";
+  marks.forEach(m=>{content.innerHTML+=`<p onclick="openSurah(${m.surah})">Surah ${m.surah} - Ayah ${m.ayah}</p>`});
+  closeSidebar();
 }
-
-// SEARCH
-document.getElementById("search").oninput=function(){
-let v=this.value.toLowerCase();
-let list=document.getElementById("surahList");
-list.innerHTML="";
-
-surahs.filter(s=>s.name.toLowerCase().includes(v))
-.forEach(s=>{
-let btn=document.createElement("button");
-btn.className="surahButton";
-btn.textContent=s.number+" - "+s.name;
-btn.onclick=()=>loadSurah(s.number);
-list.appendChild(btn);
-});
-};
-
-// RESUME
-let last=localStorage.getItem("lastRead");
-if(last && surahs){
-loadSurah(parseInt(last));
-}
-
-// PROGRESS
-document.getElementById("reader").onscroll=()=>{
-let r=document.getElementById("reader");
-let percent=(r.scrollTop/(r.scrollHeight-r.clientHeight))*100;
-document.getElementById("progressBar").value=percent;
-};
 
 // THEME
-document.getElementById("themeBtn").onclick=()=>{
-document.body.classList.toggle("light");
-};
+function toggleTheme(){document.body.classList.toggle("light");}
 
-// AUTO THEME
-let h=new Date().getHours();
-if(h>=6 && h<18) document.body.classList.add("light");
+// AUTO LOAD
+window.onload=()=>{
+  Quran=JSON.parse(localStorage.getItem("quran")||"[]");
+  if(Quran.length) showSurahs(Quran);
+  const last=localStorage.getItem("lastRead"); if(last) openSurah(Number(last));
+};
