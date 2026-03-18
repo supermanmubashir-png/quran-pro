@@ -2,10 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#020617">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quraan Pro</title>
 <link rel="stylesheet" href="style.css">
 <link rel="manifest" href="manifest.json">
@@ -15,13 +12,20 @@
 
 <!-- Sidebar -->
 <div id="sidebar" class="sidebar">
-  <h2>📖 Menu</h2>
+  <h2>📖 Quraan Pro</h2>
+
   <button onclick="showHome()">🏠 Home</button>
+<button onclick="openSettings()">⚙️ Settings</button>
+<button onclick="showNamaz()">🕌 Namaz Times</button>
   <button onclick="showBookmarks()">⭐ Bookmarks</button>
-  <button onclick="loadQuran()">⬇ Reload Quran</button>
+  <button onclick="loadQuran()">⬇ Download</button>
+<button onclick="showQibla()">🧭 Qibla</button>
+
+  <hr>
+  <h3>📜 Surahs</h3>
+  <div id="sidebarSurahs"></div>
 </div>
 
-<!-- Overlay -->
 <div id="overlay" onclick="closeSidebar()"></div>
 
 <!-- Header -->
@@ -30,21 +34,45 @@
   <h1>Quraan Pro</h1>
   <button onclick="toggleTheme()">🌙</button>
 </div>
+<div id="settingsPanel" class="panel hidden">
+  <h2>Settings</h2>
 
-<!-- Main Content -->
+  <label>Reciter:</label>
+  <select id="reciter" onchange="changeReciter()">
+    <option value="ar.alafasy">Alafasy</option>
+    <option value="ar.sudais">Sudais</option>
+    <option value="ar.ghamdi">Ghamdi</option>
+  </select>
+
+  <button onclick="toggleTheme()">🌙 Toggle Theme</button>
+</div>
+
+<div id="namazPanel" class="panel hidden">
+  <h2>Namaz Times</h2>
+  <div id="namazTimes">Loading...</div>
+</div>
+
+<!-- Content -->
 <div id="main">
   <div class="center">
     <h2>Download Full Quran</h2>
     <button onclick="loadQuran()">⬇ Download</button>
+<div id="qiblaPanel" class="panel hidden">
+  <h2>Qibla Direction</h2>
+  <div id="compass">🧭</div>
+</div>
   </div>
 
   <div id="surahList"></div>
   <div id="content"></div>
 </div>
+<div id="qiblaPanel" class="panel hidden">
+  <h2>Qibla Direction 🧭</h2>
+  <div id="compass" style="font-size:60px;text-align:center;">⬆️</div>
+</div>
+<button onclick="showQibla()">Qibla</button>
 
-<footer>
-  <p>Made by Mubashir1879</p>
-</footer>
+<footer>Made by Mubashir1879</footer>
 
 <script src="app.js"></script>
 </body>
