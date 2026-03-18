@@ -264,4 +264,4 @@ function changeReciter(){
   let r = document.getElementById("reciter").value;
   localStorage.setItem("reciter", r);
   alert("Reciter changed 🎧");
-}
+};
