@@ -223,3 +223,45 @@ function toggleFeature(name){
   features[name] = !features[name];
   alert(name + " toggled: " + features[name]);
 }
+// 🏠 HOME
+function showHome(){
+  document.getElementById("content").innerHTML = "";
+  document.getElementById("surahList").style.display = "grid";
+}
+
+// ⚙️ SETTINGS
+function openSettings(){
+  document.getElementById("settingsPanel").classList.toggle("hidden");
+}
+
+// ⭐ BOOKMARKS
+function showBookmarks(){
+  let b = JSON.parse(localStorage.getItem("b") || "[]");
+  let content = document.getElementById("content");
+
+  if(b.length === 0){
+    content.innerHTML = "<h3>No bookmarks yet ⭐</h3>";
+    return;
+  }
+
+  let html = "<h2>Bookmarks</h2>";
+
+  b.forEach(x=>{
+    html += `
+      <div class="ayah">
+        Surah ${x.s} - Ayah ${x.a}
+        <button onclick="openSurah(${x.s})">Open</button>
+      </div>
+    `;
+  });
+
+  document.getElementById("surahList").style.display = "none";
+  content.innerHTML = html;
+}
+
+// 🎧 CHANGE RECITER
+function changeReciter(){
+  let r = document.getElementById("reciter").value;
+  localStorage.setItem("reciter", r);
+  alert("Reciter changed 🎧");
+}
