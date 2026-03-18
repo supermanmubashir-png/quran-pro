@@ -8,22 +8,38 @@
 
 <body>
 
-<!-- 🔘 HEADER -->
+<!-- HEADER -->
 <div class="header">
   <button onclick="openSidebar()">☰</button>
   <h1>Quraan Pro</h1>
   <button onclick="showHome()">🏠</button>
 </div>
 
-<!-- 📂 SIDEBAR -->
+<!-- SIDEBAR -->
 <div id="sidebar" class="sidebar">
   <h2>📖 Surahs</h2>
+  <input placeholder="Search..." oninput="searchSurah(this.value)">
   <div id="sidebarSurahs"></div>
+
+  <hr>
+  <button onclick="showBookmarks()">⭐ Bookmarks</button>
+  <button onclick="openSettings()">⚙️ Settings</button>
+  <button onclick="showNamaz()">🕌 Namaz</button>
+  <button onclick="showQibla()">🧭 Qibla</button>
 </div>
 
 <div id="overlay" onclick="closeSidebar()"></div>
 
-<!-- 📜 MAIN -->
+<!-- PANELS -->
+<div id="settingsPanel" class="panel hidden"></div>
+<div id="namazPanel" class="panel hidden">
+  <div id="namazTimes"></div>
+</div>
+<div id="qiblaPanel" class="panel hidden">
+  <div id="compass">🧭</div>
+</div>
+
+<!-- MAIN -->
 <div id="content"></div>
 
 <script src="app.js"></script>
