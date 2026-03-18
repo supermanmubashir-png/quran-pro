@@ -1,39 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quraan Pro</title>
-<link rel="stylesheet" href="style.css">
-<link rel="manifest" href="manifest.json">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quraan Pro</title>
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
 </head>
 
 <body>
 
-<!-- Sidebar -->
+<!-- 🔥 SIDEBAR -->
 <div id="sidebar" class="sidebar">
   <h2>📖 Quraan Pro</h2>
 
   <button onclick="showHome()">🏠 Home</button>
-<button onclick="openSettings()">⚙️ Settings</button>
-<button onclick="showNamaz()">🕌 Namaz Times</button>
+  <button onclick="openSettings()">⚙️ Settings</button>
+  <button onclick="showNamaz()">🕌 Namaz</button>
   <button onclick="showBookmarks()">⭐ Bookmarks</button>
   <button onclick="loadQuran()">⬇ Download</button>
-<button onclick="showQibla()">🧭 Qibla</button>
+  <button onclick="showQibla()">🧭 Qibla</button>
 
   <hr>
+
   <h3>📜 Surahs</h3>
   <div id="sidebarSurahs"></div>
 </div>
 
 <div id="overlay" onclick="closeSidebar()"></div>
 
-<!-- Header -->
+<!-- 🔥 HEADER -->
 <div class="header">
   <button onclick="openSidebar()">☰</button>
   <h1>Quraan Pro</h1>
   <button onclick="toggleTheme()">🌙</button>
 </div>
+
+<!-- 🔥 MAIN CONTENT -->
+<div id="main">
+
+  <!-- HOME -->
+  <div class="center">
+    <h2>Download Full Quran</h2>
+    <button onclick="loadQuran()">⬇ Download</button>
+  </div>
+
+  <!-- SURAH LIST -->
+  <div id="surahList"></div>
+
+  <!-- AYAH CONTENT -->
+  <div id="content"></div>
+
+</div>
+
+<!-- 🔥 SETTINGS PANEL -->
 <div id="settingsPanel" class="panel hidden">
   <h2>Settings</h2>
 
@@ -47,33 +68,22 @@
   <button onclick="toggleTheme()">🌙 Toggle Theme</button>
 </div>
 
+<!-- 🔥 NAMAZ PANEL -->
 <div id="namazPanel" class="panel hidden">
   <h2>Namaz Times</h2>
   <div id="namazTimes">Loading...</div>
 </div>
 
-<!-- Content -->
-<div id="main">
-  <div class="center">
-    <h2>Download Full Quran</h2>
-    <button onclick="loadQuran()">⬇ Download</button>
-<div id="qiblaPanel" class="panel hidden">
-  <h2>Qibla Direction</h2>
-  <div id="compass">🧭</div>
-</div>
-  </div>
-
-  <div id="surahList"></div>
-  <div id="content"></div>
-</div>
+<!-- 🔥 QIBLA PANEL (ONLY ONE!) -->
 <div id="qiblaPanel" class="panel hidden">
   <h2>Qibla Direction 🧭</h2>
   <div id="compass" style="font-size:60px;text-align:center;">⬆️</div>
 </div>
-<button onclick="showQibla()">Qibla</button>
 
+<!-- 🔥 FOOTER -->
 <footer>Made by Mubashir1879</footer>
 
 <script src="app.js"></script>
+
 </body>
 </html>
