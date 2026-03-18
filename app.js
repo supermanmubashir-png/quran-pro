@@ -20,9 +20,6 @@ function loadSidebar(){
 
   Quran.forEach(s=>{
     html += `
-      <div class="surah" onclick="openSurah(${s.number}); closeSidebar();">
-        ${s.number}. ${s.englishName}
-      </div>
     `;
   });
 
