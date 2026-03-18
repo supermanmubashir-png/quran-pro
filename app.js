@@ -63,15 +63,18 @@ function openSurah(n){
   c.innerHTML = html;
 }
 
-     html += `
-  <button onclick="playAyah(${i})">▶️</button>
-`;
-      <button onclick="bookmark(${n},${a.numberInSurah})">⭐</button>
-      <button onclick="loopAyah(${n},${a.numberInSurah})">🔁</button>
-      <button onclick="showTafsir(${a.number})">📖</button>
-    </div>`;
-  });
+  html += `
+  <div class="ayah">
+    <div class="arabic">${a.text}</div>
 
+    <div class="controls">
+      <button onclick="playAyah(${i})">▶️</button>
+      <button onclick="toggleLoop(${i})">🔁</button>
+      <button onclick="startContinue(${i})">⏭</button>
+      <button onclick="bookmark(${i})">⭐</button>
+    </div>
+  </div>
+`;
   c.innerHTML=html;
 }
 
