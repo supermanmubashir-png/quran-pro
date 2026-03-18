@@ -3,20 +3,30 @@ let currentReciter=localStorage.getItem("reciter")||"ar.alafasy";
 
 // LOAD
 async function loadQuran(){
-  let res=await fetch("https://api.alquran.cloud/v1/quran/quran-uthmani");
-  let data=await res.json();
-  Quran=data.data.surahs;
+  let res = await fetch("https://api.alquran.cloud/v1/quran/quran-uthmani");
+  let data = await res.json();
+
+  Quran = data.data.surahs;
+
+  // ✅ LOAD AFTER DATA READY
   loadSidebar();
 }
 
 // SIDEBAR
 function loadSidebar(){
-  let box=document.getElementById("sidebarSurahs");
-  let html="";
+  let box = document.getElementById("sidebarSurahs");
+
+  let html = "";
+
   Quran.forEach(s=>{
-    html+=`<div class="surah" onclick="openSurah(${s.number})">${s.number}. ${s.englishName}</div>`;
+    html += `
+      <div class="surah" onclick="openSurah(${s.number}); closeSidebar();">
+        ${s.number}. ${s.englishName}
+      </div>
+    `;
   });
-  box.innerHTML=html;
+
+  box.innerHTML = html;
 }
 
 // SEARCH
@@ -32,16 +42,29 @@ function searchSurah(q){
 
 // OPEN SURAH
 function openSurah(n){
-  closeSidebar();
-  let s=Quran.find(x=>x.number==n);
-  let c=document.getElementById("content");
+  let s = Quran.find(x=>x.number==n);
 
-  let html=`<h2>${s.englishName}</h2>`;
+  if(!s){
+    alert("Loading... try again");
+    return;
+  }
+
+  let c = document.getElementById("content");
+
+  let html = `<h2>${s.englishName}</h2>`;
 
   s.ayahs.forEach(a=>{
-    html+=`
-    <div class="ayah">
-      <div class="arabic">${a.text}</div>
+    html += `
+      <div class="ayah">
+        <div class="arabic">${a.text}</div>
+
+        <button onclick="play(${n},${a.numberInSurah})">▶</button>
+      </div>
+    `;
+  });
+
+  c.innerHTML = html;
+}
 
       <button onclick="play(${n},${a.numberInSurah})">▶</button>
       <button onclick="bookmark(${n},${a.numberInSurah})">⭐</button>
