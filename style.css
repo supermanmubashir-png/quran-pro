@@ -49,11 +49,15 @@ body {
 .arabic { font-size:22px; text-align:right; }
 
 .panel {
-  position:fixed;
-  bottom:0;
-  width:100%;
-  background:#111;
-  padding:10px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+
+  background: rgba(0,0,0,0.95); /* solid clean */
+  backdrop-filter: none; /* ❌ REMOVE BLUR */
+
+  padding: 15px;
+  border-top: 1px solid #444;
 }
 
 .hidden { display:none; }
