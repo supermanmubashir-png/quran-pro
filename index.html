@@ -1,46 +1,51 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Quran God Mode</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#020617">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Quraan Pro</title>
 <link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
 <link rel="manifest" href="manifest.json">
-
 </head>
 
 <body>
 
-<header>
-<h1>📖 Quran God Mode</h1>
-
-<input id="search" placeholder="Search Surah">
-
-<button id="themeBtn">🌙</button>
-
-<progress id="progressBar" value="0" max="100"></progress>
-
-</header>
-
-<div class="container">
-
-<aside id="surahList"></aside>
-
-<main id="reader">
-
-<div class="welcome">
-<h2>Download Full Quran</h2>
-<button id="downloadBtn">⬇ Download</button>
+<!-- Sidebar -->
+<div id="sidebar" class="sidebar">
+  <h2>📖 Menu</h2>
+  <button onclick="showHome()">🏠 Home</button>
+  <button onclick="showBookmarks()">⭐ Bookmarks</button>
+  <button onclick="loadQuran()">⬇ Reload Quran</button>
 </div>
 
-</main>
+<!-- Overlay -->
+<div id="overlay" onclick="closeSidebar()"></div>
 
+<!-- Header -->
+<div class="header">
+  <button onclick="openSidebar()">☰</button>
+  <h1>Quraan Pro</h1>
+  <button onclick="toggleTheme()">🌙</button>
 </div>
+
+<!-- Main Content -->
+<div id="main">
+  <div class="center">
+    <h2>Download Full Quran</h2>
+    <button onclick="loadQuran()">⬇ Download</button>
+  </div>
+
+  <div id="surahList"></div>
+  <div id="content"></div>
+</div>
+
+<footer>
+  <p>Made by Mubashir1879</p>
+</footer>
 
 <script src="app.js"></script>
-
 </body>
 </html>
