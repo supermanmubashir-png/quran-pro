@@ -135,19 +135,15 @@ footer{
   transition:transform 0.3s;
 }
 body {
-  background: radial-gradient(circle at top, #1a1a1a, #000);
-  color: #f5d27a;
+  margin: 0;
+  background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #000);
+  background-size: 400% 400%;
+  animation: bgMove 10s infinite;
+  color: white;
 }
 
-.header, .sidebar {
-  background: rgba(20,20,20,0.9);
-  border-bottom: 1px solid #f5d27a;
-}
-
-button {
-  background: linear-gradient(45deg, gold, orange);
-  border: none;
-  color: black;
-  padding: 8px;
-  border-radius: 10px;
+@keyframes bgMove {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
 }
