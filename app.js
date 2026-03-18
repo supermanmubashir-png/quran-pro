@@ -1,5 +1,14 @@
 let Quran=[];
 
+// 🔔 NOTIFICATION
+function notify(msg){
+  if(Notification.permission==="granted"){
+    new Notification(msg);
+  } else {
+    Notification.requestPermission();
+  }
+}
+
 // LOAD QURAN
 async function loadQuran(){
   const res=await fetch("https://api.alquran.cloud/v1/quran/quran-uthmani");
@@ -16,31 +25,27 @@ async function loadQuran(){
 function showSurahs(){
   let list=document.getElementById("surahList");
   list.innerHTML="";
+
   Quran.forEach(s=>{
-    list.innerHTML+=`<div class="surah" onclick="openSurah(${s.number})">${s.number}. ${s.englishName}</div>`;
+    list.innerHTML += `
+      <div class="surah" onclick="openSurah(${s.number})">
+        ${s.number}. ${s.englishName}
+      </div>
+    `;
   });
-}
-function showQibla(){
-  document.getElementById("qiblaPanel").classList.toggle("hidden");
-function notify(msg){
-  if(Notification.permission==="granted"){
-    new Notification(msg);
-  } else {
-    Notification.requestPermission();
-  }
 }
 
-  window.addEventListener("deviceorientation", e=>{
-    let deg = e.alpha;
-    document.getElementById("compass").style.transform = `rotate(${deg}deg)`;
-  });
-}
 // SIDEBAR
 function loadSidebar(){
   let box=document.getElementById("sidebarSurahs");
   box.innerHTML="";
+
   Quran.forEach(s=>{
-    box.innerHTML+=`<div class="surah" onclick="openSurah(${s.number})">${s.number}. ${s.englishName}</div>`;
+    box.innerHTML += `
+      <div class="surah" onclick="openSurah(${s.number})">
+        ${s.number}. ${s.englishName}
+      </div>
+    `;
   });
 }
 
@@ -48,31 +53,39 @@ function loadSidebar(){
 function openSurah(n){
   let s=Quran.find(x=>x.number==n);
   let content=document.getElementById("content");
-onclick="showTafsir(${a.number})"
+
+  localStorage.setItem("lastRead", n);
 
   content.innerHTML=`<h2>${s.englishName}</h2>`;
 
   s.ayahs.forEach(a=>{
-    content.innerHTML+=`
+    content.innerHTML += `
       <div class="ayah">
         <div class="arabic">${a.text}</div>
         <button onclick="play(${n},${a.numberInSurah})">▶</button>
         <button onclick="bookmark(${n},${a.numberInSurah})">⭐</button>
+        <button onclick="showTafsir(${a.number})">📖</button>
       </div>
     `;
   });
 }
 
 // AUDIO
+let currentReciter = localStorage.getItem("reciter") || "ar.alafasy";
+
 function play(s,a){
-  new Audio(`https://cdn.islamic.network/quran/audio/128/${currentReciter}/${s}${a}.mp3`).play();
+  new Audio(
+    `https://cdn.islamic.network/quran/audio/128/${currentReciter}/${s}${a}.mp3`
+  ).play();
+}
+
+// DOWNLOAD AUDIO
 function downloadAudio(s,a){
   let url=`https://cdn.islamic.network/quran/audio/128/${currentReciter}/${s}${a}.mp3`;
   let link=document.createElement("a");
   link.href=url;
   link.download=`${s}_${a}.mp3`;
   link.click();
-}
 }
 
 // BOOKMARK
@@ -98,18 +111,7 @@ function toggleTheme(){
   document.body.classList.toggle("light");
 }
 
-// INIT
-window.onload=()=>{
-  Quran=JSON.parse(localStorage.getItem("quran")||"[]");
-  if(Quran.length){
-    showSurahs();
-    loadSidebar();
-  }
-};
-let currentReciter = localStorage.getItem("reciter") || "ar.alafasy";
-function play(s,a){
-  new Audio(`https://cdn.islamic.network/quran/audio/128/${currentReciter}/${s}${a}.mp3`).play();
-}
+// NAMAZ TIMES
 function showNamaz(){
   document.getElementById("namazPanel").classList.toggle("hidden");
 
@@ -128,11 +130,15 @@ function showNamaz(){
         Asr: ${t.Asr}<br>
         Maghrib: ${t.Maghrib}<br>
         Isha: ${t.Isha}
-notify("Time for Salah 🕌");
       `;
+
+      // ✅ FIXED: NOTIFICATION OUTSIDE HTML
+      notify("Time for Salah 🕌");
     });
   });
 }
+
+// TAFSIR
 function showTafsir(ayah){
   fetch(`https://api.alquran.cloud/v1/ayah/${ayah}/en.asad`)
   .then(r=>r.json())
@@ -140,69 +146,15 @@ function showTafsir(ayah){
     alert("Tafsir:\n\n" + d.data.text);
   });
 }
-const features = {
 
-  // 📖 CORE
-  bookmarks: true,
-  lastRead: true,
-  continueReading: true,
-  ayahLoop: true,
-  autoPlay: true,
+// INIT
+window.onload=()=>{
+  Quran=JSON.parse(localStorage.getItem("quran")||"[]");
 
-  // 🎧 AUDIO
-  reciterChange: true,
-  playbackSpeed: true,
-  audioDownload: true,
-
-  // 📊 TRACKING
-  streak: true,
-  history: true,
-  stats: true,
-
-  // 🧠 AI
-  aiSuggestions: true,
-  smartResume: true,
-  revisionMode: true,
-
-  // 🌍 LANGUAGE
-  translation: true,
-  multiLanguage: true,
-  wordMeaning: true,
-
-  // 🧭 ISLAMIC TOOLS
-  qibla: true,
-  namazTimes: true,
-  tasbih: true,
-
-  // 🎨 UI
-  darkMode: true,
-  amoled: true,
-  animations: true,
-  glassUI: true,
-
-  // ⚙️ SETTINGS
-  fontSize: true,
-  fontStyle: true,
-  layoutSwitch: true,
-
-  // 🔐 DATA
-  offlineMode: true,
-  caching: true,
-  localStorage: true,
-
-  // 💥 EXTRA
-  shareAyah: true,
-  copyAyah: true,
-  favorites: true,
-  search: true,
-  filters: true,
-  notifications: true,
-  reminders: true,
-  downloadMode: true,
-  updateSystem: true
-
+  if(Quran.length){
+    showSurahs();
+    loadSidebar();
+  } else {
+    loadQuran();
+  }
 };
-function toggleFeature(name){
-  features[name] = !features[name];
-  alert(name + " toggled: " + features[name]);
-}
