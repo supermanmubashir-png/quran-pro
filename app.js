@@ -1,76 +1,23 @@
-// ============================
-// 🔥 QURAAN PRO ULTRA APP.JS
-// ============================
+let Quran=[];
+let currentReciter=localStorage.getItem("reciter")||"ar.alafasy";
 
-let Quran = [];
-let currentSurah = null;
-let currentAyahIndex = 0;
-let loopMode = false;
-let continueMode = false;
-let audio = new Audio();
-
-// ============================
-// 🔔 NOTIFICATION
-// ============================
-function notify(msg){
-  if(Notification.permission === "granted"){
-    new Notification(msg);
-  } else {
-    Notification.requestPermission();
-  }
-}
-
-// ============================
-// 📥 LOAD QURAN
-// ============================
+// LOAD
 async function loadQuran(){
-  try{
-    const res = await fetch("https://api.alquran.cloud/v1/quran/quran-uthmani");
-    const data = await res.json();
+  let res = await fetch("https://api.alquran.cloud/v1/quran/quran-uthmani");
+  let data = await res.json();
 
-    Quran = data.data.surahs;
+  Quran = data.data.surahs;
 
-    showSurahs();
-    loadSidebar();
-
-    // Resume last read
-    let last = localStorage.getItem("lastSurah");
-    if(last){
-      openSurah(parseInt(last));
-    }
-
-  }catch(e){
-    console.error("Load error:", e);
-  }
+  // ✅ LOAD AFTER DATA READY
+  loadSidebar();
 }
 
-// ============================
-// 📜 MAIN LIST
-// ============================
-function showSurahs(){
-  const list = document.getElementById("surahList");
-  if(!list) return;
-
-  let html = "";
-  Quran.forEach(s=>{
-    html += `
-      <div class="surah" onclick="openSurah(${s.number})">
-        ${s.number}. ${s.englishName}
-      </div>
-    `;
-  });
-
-  list.innerHTML = html;
-}
-
-// ============================
-// 📂 SIDEBAR
-// ============================
+// SIDEBAR
 function loadSidebar(){
-  const box = document.getElementById("sidebarSurahs");
-  if(!box) return;
+  let box = document.getElementById("sidebarSurahs");
 
   let html = "";
+
   Quran.forEach(s=>{
     html += `
       <div class="surah" onclick="openSurah(${s.number}); closeSidebar();">
@@ -82,63 +29,234 @@ function loadSidebar(){
   box.innerHTML = html;
 }
 
-function openSidebar(){
-  document.getElementById("sidebar").classList.add("active");
+// SEARCH
+function searchSurah(q){
+  let box=document.getElementById("sidebarSurahs");
+  let html="";
+  Quran.filter(s=>s.englishName.toLowerCase().includes(q.toLowerCase()))
+  .forEach(s=>{
+    html+=`<div class="surah" onclick="openSurah(${s.number})">${s.englishName}</div>`;
+  });
+  box.innerHTML=html;
 }
 
-function closeSidebar(){
-  document.getElementById("sidebar").classList.remove("active");
-}
+// OPEN SURAH
+function openSurah(n){
+  let s = Quran.find(x=>x.number==n);
 
-// ============================
-// 📖 OPEN SURAH
-// ============================
-function openSurah(num){
-  currentSurah = Quran.find(s => s.number === num);
-  if(!currentSurah) return;
+  if(!s){
+    alert("Loading... try again");
+    return;
+  }
 
-  localStorage.setItem("lastSurah", num);
+  let c = document.getElementById("content");
 
-  const content = document.getElementById("content");
+  let html = `<h2>${s.englishName}</h2>`;
 
-  let html = `<h2>${currentSurah.englishName}</h2>`;
-
-  currentSurah.ayahs.forEach((a, i)=>{
+  s.ayahs.forEach(a=>{
     html += `
       <div class="ayah">
         <div class="arabic">${a.text}</div>
 
-        <div class="controls">
-          <button onclick="playAyah(${i})">▶️</button>
-          <button onclick="toggleLoop(${i})">🔁</button>
-          <button onclick="startContinue(${i})">⏭</button>
-          <button onclick="bookmark(${i})">⭐</button>
-        </div>
+        <button onclick="play(${n},${a.numberInSurah})">▶</button>
       </div>
     `;
   });
 
-  content.innerHTML = html;
+  c.innerHTML = html;
 }
 
-// ============================
-// 🔊 AUDIO
-// ============================
-function playAyah(i){
-  currentAyahIndex = i;
+      <button onclick="play(${n},${a.numberInSurah})">▶</button>
+      <button onclick="bookmark(${n},${a.numberInSurah})">⭐</button>
+      <button onclick="loopAyah(${n},${a.numberInSurah})">🔁</button>
+      <button onclick="showTafsir(${a.number})">📖</button>
+    </div>`;
+  });
 
-  let ayahNum = currentSurah.ayahs[i].number;
-  audio.src = `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${ayahNum}.mp3`;
+  c.innerHTML=html;
+}
 
+// AUDIO
+function play(s,a){
+  new Audio(`https://cdn.islamic.network/quran/audio/128/${currentReciter}/${s}${a}.mp3`).play();
+}
+
+// LOOP
+function loopAyah(s,a){
+  let audio=new Audio(`https://cdn.islamic.network/quran/audio/128/${currentReciter}/${s}${a}.mp3`);
+  audio.loop=true;
   audio.play();
 }
 
+// BOOKMARK
+function bookmark(s,a){
+  let b=JSON.parse(localStorage.getItem("b")||"[]");
+  b.push({s,a});
+  localStorage.setItem("b",JSON.stringify(b));
+}
+
+// BOOKMARK VIEW
+function showBookmarks(){
+  let b=JSON.parse(localStorage.getItem("b")||"[]");
+  let c=document.getElementById("content");
+
+  let html="<h2>Bookmarks</h2>";
+  b.forEach(x=>{
+    html+=`<div class="ayah">Surah ${x.s} Ayah ${x.a}</div>`;
+  });
+
+  c.innerHTML=html;
+}
+
+// SETTINGS
+function openSettings(){
+  document.getElementById("settingsPanel").classList.toggle("hidden");
+
+  document.getElementById("settingsPanel").innerHTML=`
+    <h3>Settings</h3>
+    <select onchange="changeReciter(this.value)">
+      <option value="ar.alafasy">Alafasy</option>
+      <option value="ar.husary">Husary</option>
+    </select>
+  `;
+}
+
+// CHANGE RECITER
+function changeReciter(r){
+  currentReciter=r;
+  localStorage.setItem("reciter",r);
+}
+
+// NAMAZ
+function showNamaz(){
+  document.getElementById("namazPanel").classList.toggle("hidden");
+
+  navigator.geolocation.getCurrentPosition(pos=>{
+    fetch(`https://api.aladhan.com/v1/timings?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}`)
+    .then(r=>r.json())
+    .then(d=>{
+      let t=d.data.timings;
+      document.getElementById("namazTimes").innerHTML=
+      `Fajr:${t.Fajr}<br>Dhuhr:${t.Dhuhr}<br>Asr:${t.Asr}<br>Maghrib:${t.Maghrib}<br>Isha:${t.Isha}`;
+    });
+  });
+}
+
+// QIBLA
+function showQibla(){
+  document.getElementById("qiblaPanel").classList.toggle("hidden");
+
+  window.addEventListener("deviceorientation",e=>{
+    document.getElementById("compass").style.transform=`rotate(${e.alpha}deg)`;
+  });
+}
+
+// TAFSIR
+function showTafsir(a){
+  fetch(`https://api.alquran.cloud/v1/ayah/${a}/en.asad`)
+  .then(r=>r.json())
+  .then(d=>alert(d.data.text));
+}
+
+// SIDEBAR
+function openSidebar(){
+  document.getElementById("sidebar").classList.add("active");
+  document.getElementById("overlay").classList.add("active");
+}
+function closeSidebar(){
+  document.getElementById("sidebar").classList.remove("active");
+  document.getElementById("overlay").classList.remove("active");
+}
+
+// HOME
+function showHome(){
+  document.getElementById("content").innerHTML="<h2>Select Surah 📖</h2>";
+}
+
+// INIT
+window.onload=()=>{
+  loadQuran();
+  showHome();
+};
+// ============================
+// ⚙️ SETTINGS SYSTEM
+// ============================
+
+let reciter = localStorage.getItem("reciter") || "ar.alafasy";
+let autoContinue = localStorage.getItem("autoContinue") === "true";
+let loopDefault = localStorage.getItem("loopDefault") === "true";
+let notificationsOn = localStorage.getItem("notifications") !== "false";
+
+// ============================
+// 🎧 CHANGE RECITER
+// ============================
+function changeReciter(r){
+  reciter = r;
+  localStorage.setItem("reciter", r);
+  notify("Reciter Changed 🎧");
+}
+
+// ============================
+// 🌙 DARK MODE (SAVE)
+// ============================
+function toggleDark(){
+  document.body.classList.toggle("dark");
+  localStorage.setItem("dark", document.body.classList.contains("dark"));
+}
+
+// LOAD DARK MODE
+if(localStorage.getItem("dark") === "true"){
+  document.body.classList.add("dark");
+}
+
+// ============================
+// 🔠 FONT SIZE
+// ============================
+function changeFont(size){
+  document.documentElement.style.setProperty("--fontSize", size + "px");
+  localStorage.setItem("fontSize", size);
+}
+
+// LOAD FONT
+let savedFont = localStorage.getItem("fontSize");
+if(savedFont){
+  document.documentElement.style.setProperty("--fontSize", savedFont + "px");
+}
+
+// ============================
+// 🔁 LOOP DEFAULT
+// ============================
+function toggleLoopDefault(){
+  loopDefault = !loopDefault;
+  localStorage.setItem("loopDefault", loopDefault);
+  notify("Loop Default: " + loopDefault);
+}
+
+// ============================
+// ⏭ AUTO CONTINUE
+// ============================
+function toggleAutoContinue(){
+  autoContinue = !autoContinue;
+  localStorage.setItem("autoContinue", autoContinue);
+  notify("Auto Continue: " + autoContinue);
+}
+
+// ============================
+// 🔔 NOTIFICATIONS
+// ============================
+function toggleNotifications(){
+  notificationsOn = !notificationsOn;
+  localStorage.setItem("notifications", notificationsOn);
+  notify("Notifications: " + notificationsOn);
+}
+
+// UPDATE AUDIO BEHAVIOR
 audio.onended = ()=>{
-  if(loopMode){
+  if(loopMode || loopDefault){
     playAyah(currentAyahIndex);
   }
 
-  if(continueMode){
+  if(continueMode || autoContinue){
     currentAyahIndex++;
     if(currentAyahIndex < currentSurah.ayahs.length){
       playAyah(currentAyahIndex);
@@ -147,100 +265,20 @@ audio.onended = ()=>{
 };
 
 // ============================
-// 🔁 LOOP MODE
+// ⚙️ PANEL CONTROL
 // ============================
-function toggleLoop(i){
-  loopMode = true;
-  continueMode = false;
-  playAyah(i);
+function openSettings(){
+  document.getElementById("settingsPanel").style.display = "block";
+}
+
+function closeSettings(){
+  document.getElementById("settingsPanel").style.display = "none";
 }
 
 // ============================
-// ⏭ CONTINUE MODE
+// 🧹 RESET
 // ============================
-function startContinue(i){
-  continueMode = true;
-  loopMode = false;
-  playAyah(i);
+function resetApp(){
+  localStorage.clear();
+  location.reload();
 }
-
-// ============================
-// ⭐ BOOKMARK
-// ============================
-function bookmark(i){
-  localStorage.setItem("bookmark", JSON.stringify({
-    surah: currentSurah.number,
-    ayah: i
-  }));
-  notify("Bookmarked ⭐");
-}
-
-// ============================
-// 📌 LOAD BOOKMARK
-// ============================
-function loadBookmark(){
-  let b = JSON.parse(localStorage.getItem("bookmark"));
-  if(!b) return;
-
-  openSurah(b.surah);
-
-  setTimeout(()=>{
-    playAyah(b.ayah);
-  },500);
-}
-
-// ============================
-// 🌙 DARK MODE
-// ============================
-function toggleDark(){
-  document.body.classList.toggle("dark");
-}
-
-// ============================
-// 🔍 SEARCH
-// ============================
-function searchSurah(q){
-  q = q.toLowerCase();
-
-  let filtered = Quran.filter(s => 
-    s.englishName.toLowerCase().includes(q)
-  );
-
-  let list = document.getElementById("surahList");
-
-  let html = "";
-  filtered.forEach(s=>{
-    html += `<div onclick="openSurah(${s.number})">${s.englishName}</div>`;
-  });
-
-  list.innerHTML = html;
-}
-
-// ============================
-// 🧭 SCROLL TOP
-// ============================
-function scrollTopBtn(){
-  window.scrollTo({top:0, behavior:"smooth"});
-}
-
-// ============================
-// 🕌 FAKE NAMAZ TIME (DEMO)
-// ============================
-function prayerNotify(){
-  setInterval(()=>{
-    let h = new Date().getHours();
-
-    if(h === 5) notify("Fajr Time 🕌");
-    if(h === 13) notify("Dhuhr Time 🕌");
-    if(h === 18) notify("Maghrib Time 🕌");
-
-  },60000);
-}
-
-// ============================
-// 🚀 INIT
-// ============================
-window.onload = ()=>{
-  loadQuran();
-  prayerNotify();
-};
