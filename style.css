@@ -1,110 +1,38 @@
+/* Reset & body */
 *{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,#020617,#0f172a);color:white;transition:0.3s;overflow-x:hidden;height:100%;}
 
-body{
-font-family:sans-serif;
-color:white;
-background:linear-gradient(135deg,#020617,#0f172a);
-overflow:hidden;
+/* Header */
+.header{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:15px; backdrop-filter:blur(10px); background:rgba(255,255,255,0.05); border-bottom:1px solid rgba(255,255,255,0.1);
 }
+.header h1{margin:0;font-size:18px;}
+input{flex:1;padding:10px;border-radius:10px;border:none;outline:none;background:rgba(255,255,255,0.1);color:white;}
 
-body::before{
-content:"";
-position:fixed;
-width:200%;
-height:200%;
-background-image:radial-gradient(circle,rgba(34,197,94,0.15) 2px,transparent 2px);
-background-size:80px 80px;
-animation:move 20s linear infinite;
-z-index:-1;
-}
+/* Buttons */
+button{padding:8px 12px;border:none;border-radius:10px;background:linear-gradient(135deg,#22c55e,#4ade80);color:black;cursor:pointer;transition:0.2s;}
+button:hover{transform:scale(1.05);}
 
-@keyframes move{
-0%{transform:translate(0,0);}
-100%{transform:translate(-200px,-200px);}
-}
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:-260px;width:250px;height:100%;background:#020617;padding:20px;transition:.3s;z-index:200;}
+.sidebar.active{left:0;}
+#overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:none;z-index:100;}
+#overlay.active{display:block;}
 
-header{
-display:flex;
-gap:10px;
-align-items:center;
-padding:10px;
-background:rgba(255,255,255,0.05);
-backdrop-filter:blur(10px);
-}
+/* Surah List */
+#surahList{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:15px;padding:20px;}
+.surah{padding:15px;border-radius:15px;text-align:center;background:rgba(255,255,255,0.05);backdrop-filter:blur(10px);transition:.3s;cursor:pointer;}
+.surah:hover{transform:translateY(-5px) scale(1.03);background:rgba(255,255,255,0.1);}
 
-.container{
-display:grid;
-grid-template-columns:250px 1fr;
-height:100vh;
-}
+/* Main Content */
+#content{padding:20px;max-width:800px;margin:auto;}
+.ayah{margin-bottom:25px;padding:15px;border-radius:15px;background:rgba(255,255,255,0.03);}
+.arabic{font-size:26px;text-align:right;line-height:2;}
+.translation{color:#94a3b8;margin-top:8px;}
 
-#surahList{
-overflow:auto;
-padding:10px;
-background:rgba(255,255,255,0.05);
-}
-
-.surahButton{
-width:100%;
-padding:10px;
-margin-bottom:5px;
-border:none;
-border-radius:8px;
-background:rgba(255,255,255,0.05);
-color:white;
-cursor:pointer;
-}
-
-.surahButton:hover{background:#22c55e;}
-
-#reader{
-overflow:auto;
-padding:20px;
-}
-
-.ayah{
-background:rgba(255,255,255,0.05);
-padding:15px;
-margin-bottom:10px;
-border-radius:10px;
-}
-
-.ayah.highlight{
-background:#22c55e;
-color:black;
-}
-
-.arabic{
-font-family:"Amiri",serif;
-font-size:34px;
-direction:rtl;
-text-align:right;
-}
-
-.translation{
-margin-top:10px;
-color:#cbd5f5;
-}
-
-audio{width:100%;margin-top:10px;}
-
-button{
-padding:6px 10px;
-border:none;
-border-radius:6px;
-background:#22c55e;
-cursor:pointer;
-}
-
-progress{
-width:100%;
-}
-
-body.light{
-background:#f1f5f9;
-color:black;
-}
-
-body.light .ayah{
-background:#e2e8f0;
-}
+/* Footer */
+footer{text-align:center;padding:10px;color:#94a3b8;}
+.light{background:#f8fafc;color:black;}
+.light input{background:rgba(0,0,0,0.1);color:black;}
+.light .surah{background:rgba(0,0,0,0.05);}
