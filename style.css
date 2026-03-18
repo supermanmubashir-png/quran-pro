@@ -61,3 +61,24 @@ body {
 }
 
 .hidden { display:none; }
+.panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 80%;
+  height: 100%;
+  background: #111;
+  color: white;
+  padding: 20px;
+  z-index: 999;
+  overflow-y: auto;
+  display: none;
+}
+
+.settingsBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  font-size: 24px;
+  padding: 10px;
+}
