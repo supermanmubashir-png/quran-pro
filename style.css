@@ -1,149 +1,80 @@
-body{
-  margin:0;
-  font-family:sans-serif;
-  background:#020617;
-  color:white;
-}
-
-.header{
-  display:flex;
-  justify-content:space-between;
-  padding:10px;
-  background:#111;
-}
-
-button{
-  padding:8px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-}
-
-/* ULTRA PREMIUM PANEL */
-.premium-panel{
-  position:fixed;
-  bottom:-100%;
-  left:0;
-  width:100%;
-  height:65%;
-  background:linear-gradient(180deg,#020617,#020617,#000);
-  backdrop-filter:blur(30px);
-  border-top-left-radius:30px;
-  border-top-right-radius:30px;
-  transition:0.5s cubic-bezier(0.22,1,0.36,1);
-  box-shadow:0 -20px 60px rgba(0,0,0,0.9);
-  display:flex;
-  flex-direction:column;
-  z-index:999;
-}
-
-.premium-panel.active{
-  bottom:0;
-}
-
-/* DRAG BAR */
-.premium-panel::before{
-  content:"";
-  width:60px;
-  height:6px;
-  background:linear-gradient(90deg,#22c55e,#4ade80);
-  border-radius:10px;
-  margin:10px auto;
-}
-
-/* HEADER */
-.panel-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:15px 20px;
-  font-size:18px;
-}
-
-.panel-header button{
-  background:none;
-  color:white;
-  font-size:18px;
-}
-
-/* CONTENT */
-.panel-content{
-  padding:20px;
-  overflow:auto;
-  flex:1;
-  line-height:1.8;
-}
-
-/* ANIMATION EFFECT */
-.premium-panel.active{
-  animation:slideUp 0.4s ease;
-}
-
-@keyframes slideUp{
-  from{transform:translateY(100%);}
-  to{transform:translateY(0);}
-}
-
-.sidebar.active{left:0;}
-
-#overlay{
-  display:none;
-  position:fixed;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.5);
-}
-
-#overlay.active{display:block;}
-
-.surah{
-  padding:10px;
-  border-bottom:1px solid #333;
-  cursor:pointer;
-}
-
-.ayah{
-  padding:15px;
-  border-bottom:1px solid #333;
-}
-
-.arabic{
-  font-size:22px;
-  text-align:right;
-}
-
-footer{
-  text-align:center;
-  padding:10px;
-}
-.panel{
-  position:fixed;
-  bottom:0;
-  left:0;
-  width:100%;
-  background:#111;
-  padding:20px;
-  border-top:2px solid #22c55e;
-  z-index:300;
-}
-
-.hidden{display:none;}
-#compass{
-  font-size:40px;
-  text-align:center;
-  margin-top:20px;
-  transition:transform 0.3s;
-}
 body {
   margin: 0;
+  font-family: sans-serif;
+  color: white;
+
   background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #000);
   background-size: 400% 400%;
-  animation: bgMove 10s infinite;
-  color: white;
+  animation: bg 10s infinite;
 }
 
-@keyframes bgMove {
+@keyframes bg {
   0% {background-position: 0% 50%;}
   50% {background-position: 100% 50%;}
   100% {background-position: 0% 50%;}
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background: rgba(0,0,0,0.4);
+}
+
+/* SIDEBAR */
+.sidebar {
+  position: fixed;
+  left: -260px;
+  top: 0;
+  width: 250px;
+  height: 100%;
+  background: rgba(0,0,0,0.95);
+  overflow-y: auto;
+  transition: 0.3s;
+  padding: 10px;
+}
+
+.sidebar.active {
+  left: 0;
+}
+
+/* OVERLAY */
+#overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  display: none;
+  background: rgba(0,0,0,0.5);
+}
+
+#overlay.active {
+  display: block;
+}
+
+/* SURAH */
+.surah {
+  padding: 10px;
+  border-bottom: 1px solid #444;
+  cursor: pointer;
+}
+
+/* AYAH */
+.ayah {
+  padding: 15px;
+  border-bottom: 1px solid #555;
+}
+
+.arabic {
+  font-size: 22px;
+  text-align: right;
+}
+
+/* BUTTONS */
+button {
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  margin-top: 5px;
 }
