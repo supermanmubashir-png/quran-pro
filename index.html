@@ -41,6 +41,35 @@
 
 <!-- MAIN -->
 <div id="content"></div>
+<!-- SETTINGS PANEL -->
+<div id="settingsPanel" class="panel">
+  <h2>⚙️ Settings</h2>
+
+  <label>Reciter:</label>
+  <select id="reciterSelect" onchange="changeReciter(this.value)">
+    <option value="ar.alafasy">Alafasy</option>
+    <option value="ar.abdulbasitmurattal">Abdul Basit</option>
+  </select>
+
+  <br><br>
+
+  <button onclick="toggleDark()">🌙 Toggle Dark Mode</button>
+  <button onclick="toggleAutoContinue()">⏭ Auto Continue</button>
+  <button onclick="toggleLoopDefault()">🔁 Loop Default</button>
+  <button onclick="toggleNotifications()">🔔 Notifications</button>
+
+  <br><br>
+
+  <label>Font Size:</label>
+  <input type="range" min="18" max="40" value="24" onchange="changeFont(this.value)">
+
+  <br><br>
+
+  <button onclick="resetApp()">🧹 Reset App</button>
+  <button onclick="closeSettings()">❌ Close</button>
+</div>
+
+<button onclick="openSettings()" class="settingsBtn">⚙️</button>
 
 <script src="app.js"></script>
 </body>
