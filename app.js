@@ -63,7 +63,9 @@ function openSurah(n){
   c.innerHTML = html;
 }
 
-      <button onclick="play(${n},${a.numberInSurah})">▶</button>
+     html += `
+  <button onclick="playAyah(${i})">▶️</button>
+`;
       <button onclick="bookmark(${n},${a.numberInSurah})">⭐</button>
       <button onclick="loopAyah(${n},${a.numberInSurah})">🔁</button>
       <button onclick="showTafsir(${a.number})">📖</button>
