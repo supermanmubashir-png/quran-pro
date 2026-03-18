@@ -134,3 +134,20 @@ footer{
   margin-top:20px;
   transition:transform 0.3s;
 }
+body {
+  background: radial-gradient(circle at top, #1a1a1a, #000);
+  color: #f5d27a;
+}
+
+.header, .sidebar {
+  background: rgba(20,20,20,0.9);
+  border-bottom: 1px solid #f5d27a;
+}
+
+button {
+  background: linear-gradient(45deg, gold, orange);
+  border: none;
+  color: black;
+  padding: 8px;
+  border-radius: 10px;
+}
