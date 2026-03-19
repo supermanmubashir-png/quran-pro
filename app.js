@@ -259,3 +259,72 @@ function resetApp(){
 window.onload = ()=>{
   loadQuran();
 };
+// ============================
+// 🌍 TRANSLATION
+// ============================
+let showTranslation = false;
+
+function toggleTranslation(){
+  showTranslation = !showTranslation;
+  notify("Translation: " + showTranslation);
+
+  if(currentSurah){
+    openSurah(currentSurah.number);
+  }
+}
+
+// ============================
+// 📖 TAFSIR
+// ============================
+function showTafsir(ayahNum){
+  fetch(`https://api.alquran.cloud/v1/ayah/${ayahNum}/en.asad`)
+  .then(r=>r.json())
+  .then(d=>{
+    let panel = document.getElementById("tafsirPanel");
+    panel.classList.remove("hidden");
+    panel.innerHTML = `<h3>Tafsir</h3><p>${d.data.text}</p>
+    <button onclick="closeTafsir()">Close</button>`;
+  });
+}
+
+function closeTafsir(){
+  document.getElementById("tafsirPanel").classList.add("hidden");
+}
+
+// ============================
+// 🕌 NAMAZ TIMES (REAL API)
+// ============================
+function showNamaz(){
+  let panel = document.getElementById("namazPanel");
+  panel.classList.remove("hidden");
+
+  navigator.geolocation.getCurrentPosition(pos=>{
+    fetch(`https://api.aladhan.com/v1/timings?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}`)
+    .then(r=>r.json())
+    .then(d=>{
+      let t = d.data.timings;
+
+      panel.innerHTML = `
+        <h3>Namaz Times 🕌</h3>
+        Fajr: ${t.Fajr}<br>
+        Dhuhr: ${t.Dhuhr}<br>
+        Asr: ${t.Asr}<br>
+        Maghrib: ${t.Maghrib}<br>
+        Isha: ${t.Isha}<br>
+        <button onclick="this.parentElement.classList.add('hidden')">Close</button>
+      `;
+    });
+  });
+}
+
+// ============================
+// 🧭 QIBLA
+// ============================
+function showQibla(){
+  let panel = document.getElementById("qiblaPanel");
+  panel.classList.remove("hidden");
+
+  window.addEventListener("deviceorientation", e=>{
+    document.getElementById("compass").style.transform = `rotate(${e.alpha}deg)`;
+  });
+}
