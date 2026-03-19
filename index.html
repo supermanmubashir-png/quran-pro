@@ -44,6 +44,23 @@
 <!-- SETTINGS PANEL -->
 <div id="settingsPanel" class="panel">
   <h2>⚙️ Settings</h2>
+  <!-- 📖 TAFSIR PANEL -->
+<div id="tafsirPanel" class="panel hidden"></div>
+
+<!-- 🌍 TRANSLATION TOGGLE -->
+<button onclick="toggleTranslation()" class="floatingBtn">🌍</button>
+
+<!-- 🕌 NAMAZ PANEL -->
+<div id="namazPanel" class="panel hidden"></div>
+
+<!-- 🧭 QIBLA PANEL -->
+<div id="qiblaPanel" class="panel hidden">
+  <div id="compass">🧭</div>
+</div>
+
+<!-- QUICK ACCESS -->
+<button onclick="showNamaz()" class="floatingBtn">🕌</button>
+<button onclick="showQibla()" class="floatingBtn">🧭</button>
 
   <label>Reciter:</label>
   <select id="reciterSelect" onchange="changeReciter(this.value)">
