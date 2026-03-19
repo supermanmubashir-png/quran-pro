@@ -82,3 +82,39 @@ body {
   font-size: 24px;
   padding: 10px;
 }
+.floatingBtn {
+  position: fixed;
+  right: 15px;
+  bottom: 20px;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 50%;
+  font-size: 18px;
+  background: #111;
+  color: white;
+}
+
+.panel {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: #111;
+  padding: 15px;
+  max-height: 60%;
+  overflow-y: auto;
+}
+
+.hidden {
+  display: none;
+}
+
+.translation {
+  font-size: 16px;
+  opacity: 0.8;
+}
+
+#compass {
+  font-size: 50px;
+  text-align: center;
+  margin-top: 20px;
+}
