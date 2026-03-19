@@ -103,6 +103,28 @@ function openSurah(num){
   currentSurah = Quran.find(s => s.number === num);
   if(!currentSurah) return;
 
+  let content = document.getElementById("content");
+
+  let html = `<h2>${currentSurah.englishName}</h2>`;
+
+  currentSurah.ayahs.forEach((a, i)=>{
+    html += `
+      <div class="ayah">
+        <div class="arabic">${a.text}</div>
+
+        <div class="controls">
+          <button onclick="playAyah(${i})">▶️</button>
+          <button onclick="toggleLoop(${i})">🔁</button>
+          <button onclick="startContinue(${i})">⏭</button>
+          <button onclick="bookmark(${i})">⭐</button>
+          <button onclick="showTafsir(${a.number})">📖</button>
+        </div>
+      </div>
+    `;
+  });
+
+  content.innerHTML = html;
+}
   localStorage.setItem("lastSurah", num);
 
   const content = document.getElementById("content");
