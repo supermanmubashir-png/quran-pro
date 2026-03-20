@@ -1,82 +1,36 @@
 // ============================
-// 🔥 QURAAN PRO FINAL APP.JS
+// 🔥 QURAAN PRO FINAL (SAFE)
 // ============================
 
-// GLOBALS
 let Quran = [];
 let currentSurah = null;
 let currentAyahIndex = 0;
 
-let loopMode = false;
-let continueMode = false;
-
 let reciter = localStorage.getItem("reciter") || "ar.alafasy";
-let autoContinue = localStorage.getItem("autoContinue") === "true";
-let loopDefault = localStorage.getItem("loopDefault") === "true";
-
 let audio = new Audio();
 
-// ============================
-// 🔔 NOTIFY
-// ============================
-function notify(msg){
-  if(Notification.permission === "granted"){
-    new Notification(msg);
-  } else {
-    Notification.requestPermission();
-  }
-}
+let loopMode = false;
+let continueMode = false;
+let showTranslation = false;
 
 // ============================
-// 📥 LOAD QURAN
+// 📥 LOAD QURAN + TRANSLATION
 // ============================
 async function loadQuran(){
-  try{
-    const res = await fetch("https://api.alquran.cloud/v1/quran/quran-uthmani");
-    const data = await res.json();
+  let res = await fetch("https://api.alquran.cloud/v1/quran/quran-uthmani");
+  let data = await res.json();
+  Quran = data.data.surahs;
 
-    Quran = data.data.surahs;
-
-    showSurahs();
-    loadSidebar();
-
-    let last = localStorage.getItem("lastSurah");
-    if(last){
-      openSurah(parseInt(last));
-    }
-
-  }catch(e){
-    console.error("Error:", e);
-  }
-}
-
-// ============================
-// 📜 MAIN LIST
-// ============================
-function showSurahs(){
-  const list = document.getElementById("surahList");
-  if(!list) return;
-
-  let html = "";
-  Quran.forEach(s=>{
-    html += `
-      <div class="surah" onclick="openSurah(${s.number})">
-        ${s.number}. ${s.englishName}
-      </div>
-    `;
-  });
-
-  list.innerHTML = html;
+  loadSidebar();
 }
 
 // ============================
 // 📂 SIDEBAR
 // ============================
 function loadSidebar(){
-  const box = document.getElementById("sidebarSurahs");
-  if(!box) return;
-
+  let box = document.getElementById("sidebarSurahs");
   let html = "";
+
   Quran.forEach(s=>{
     html += `
       <div class="surah" onclick="openSurah(${s.number}); closeSidebar();">
@@ -88,18 +42,10 @@ function loadSidebar(){
   box.innerHTML = html;
 }
 
-function openSidebar(){
-  document.getElementById("sidebar").classList.add("active");
-}
-
-function closeSidebar(){
-  document.getElementById("sidebar").classList.remove("active");
-}
-
 // ============================
 // 📖 OPEN SURAH
 // ============================
-function openSurah(num){
+async function openSurah(num){
   currentSurah = Quran.find(s => s.number === num);
   if(!currentSurah) return;
 
@@ -107,10 +53,20 @@ function openSurah(num){
 
   let html = `<h2>${currentSurah.englishName}</h2>`;
 
+  // 🔥 FETCH TRANSLATION
+  let translationData = null;
+  if(showTranslation){
+    let t = await fetch(`https://api.alquran.cloud/v1/surah/${num}/en.asad`);
+    let tData = await t.json();
+    translationData = tData.data.ayahs;
+  }
+
   currentSurah.ayahs.forEach((a, i)=>{
     html += `
       <div class="ayah">
         <div class="arabic">${a.text}</div>
+
+        ${showTranslation ? `<div class="translation">${translationData[i].text}</div>` : ""}
 
         <div class="controls">
           <button onclick="playAyah(${i})">▶️</button>
@@ -118,29 +74,6 @@ function openSurah(num){
           <button onclick="startContinue(${i})">⏭</button>
           <button onclick="bookmark(${i})">⭐</button>
           <button onclick="showTafsir(${a.number})">📖</button>
-        </div>
-      </div>
-    `;
-  });
-
-  content.innerHTML = html;
-}
-  localStorage.setItem("lastSurah", num);
-
-  const content = document.getElementById("content");
-
-  let html = `<h2>${currentSurah.englishName}</h2>`;
-
-  currentSurah.ayahs.forEach((a, i)=>{
-    html += `
-      <div class="ayah">
-        <div class="arabic">${a.text}</div>
-
-        <div class="controls">
-          <button onclick="playAyah(${i})">▶️</button>
-          <button onclick="toggleLoop(${i})">🔁</button>
-          <button onclick="startContinue(${i})">⏭</button>
-          <button onclick="bookmark(${i})">⭐</button>
         </div>
       </div>
     `;
@@ -162,11 +95,9 @@ function playAyah(i){
 }
 
 audio.onended = ()=>{
-  if(loopMode || loopDefault){
-    playAyah(currentAyahIndex);
-  }
+  if(loopMode) playAyah(currentAyahIndex);
 
-  if(continueMode || autoContinue){
+  if(continueMode){
     currentAyahIndex++;
     if(currentAyahIndex < currentSurah.ayahs.length){
       playAyah(currentAyahIndex);
@@ -175,7 +106,7 @@ audio.onended = ()=>{
 };
 
 // ============================
-// 🔁 LOOP
+// 🔁 LOOP / CONTINUE
 // ============================
 function toggleLoop(i){
   loopMode = true;
@@ -183,9 +114,6 @@ function toggleLoop(i){
   playAyah(i);
 }
 
-// ============================
-// ⏭ CONTINUE
-// ============================
 function startContinue(i){
   continueMode = true;
   loopMode = false;
@@ -200,39 +128,28 @@ function bookmark(i){
     surah: currentSurah.number,
     ayah: i
   }));
-  notify("Bookmarked ⭐");
+  alert("Bookmarked ⭐");
 }
 
 // ============================
-// 🔍 SEARCH
+// 📖 TAFSIR
 // ============================
-function searchSurah(q){
-  q = q.toLowerCase();
-
-  let filtered = Quran.filter(s =>
-    s.englishName.toLowerCase().includes(q)
-  );
-
-  let list = document.getElementById("surahList");
-
-  let html = "";
-  filtered.forEach(s=>{
-    html += `<div onclick="openSurah(${s.number})">${s.englishName}</div>`;
+function showTafsir(num){
+  fetch(`https://api.alquran.cloud/v1/ayah/${num}/en.asad`)
+  .then(r=>r.json())
+  .then(d=>{
+    alert(d.data.text);
   });
-
-  list.innerHTML = html;
 }
 
 // ============================
-// 🌙 DARK MODE
+// 🌍 TRANSLATION TOGGLE
 // ============================
-function toggleDark(){
-  document.body.classList.toggle("dark");
-  localStorage.setItem("dark", document.body.classList.contains("dark"));
-}
-
-if(localStorage.getItem("dark") === "true"){
-  document.body.classList.add("dark");
+function toggleTranslation(){
+  showTranslation = !showTranslation;
+  if(currentSurah){
+    openSurah(currentSurah.number);
+  }
 }
 
 // ============================
@@ -241,100 +158,22 @@ if(localStorage.getItem("dark") === "true"){
 function changeReciter(r){
   reciter = r;
   localStorage.setItem("reciter", r);
-  notify("Reciter Changed 🎧");
 }
 
-function toggleAutoContinue(){
-  autoContinue = !autoContinue;
-  localStorage.setItem("autoContinue", autoContinue);
-  notify("Auto Continue: " + autoContinue);
-}
-
-function toggleLoopDefault(){
-  loopDefault = !loopDefault;
-  localStorage.setItem("loopDefault", loopDefault);
-  notify("Loop Default: " + loopDefault);
+function toggleDark(){
+  document.body.classList.toggle("dark");
 }
 
 // ============================
-// ⚙️ PANEL CONTROL
-// ============================
-function openSettings(){
-  document.getElementById("settingsPanel").style.display = "block";
-}
-
-function closeSettings(){
-  document.getElementById("settingsPanel").style.display = "none";
-}
-
-// ============================
-// 🧹 RESET
-// ============================
-function resetApp(){
-  localStorage.clear();
-  location.reload();
-}
-
-// ============================
-// 🚀 INIT
-// ============================
-window.onload = ()=>{
-  loadQuran();
-};
-// ============================
-// 🌍 TRANSLATION
-// ============================
-let showTranslation = false;
-
-function toggleTranslation(){
-  showTranslation = !showTranslation;
-  notify("Translation: " + showTranslation);
-
-  if(currentSurah){
-    openSurah(currentSurah.number);
-  }
-}
-
-// ============================
-// 📖 TAFSIR
-// ============================
-function showTafsir(ayahNum){
-  fetch(`https://api.alquran.cloud/v1/ayah/${ayahNum}/en.asad`)
-  .then(r=>r.json())
-  .then(d=>{
-    let panel = document.getElementById("tafsirPanel");
-    panel.classList.remove("hidden");
-    panel.innerHTML = `<h3>Tafsir</h3><p>${d.data.text}</p>
-    <button onclick="closeTafsir()">Close</button>`;
-  });
-}
-
-function closeTafsir(){
-  document.getElementById("tafsirPanel").classList.add("hidden");
-}
-
-// ============================
-// 🕌 NAMAZ TIMES (REAL API)
+// 🕌 NAMAZ
 // ============================
 function showNamaz(){
-  let panel = document.getElementById("namazPanel");
-  panel.classList.remove("hidden");
-
   navigator.geolocation.getCurrentPosition(pos=>{
     fetch(`https://api.aladhan.com/v1/timings?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}`)
     .then(r=>r.json())
     .then(d=>{
       let t = d.data.timings;
-
-      panel.innerHTML = `
-        <h3>Namaz Times 🕌</h3>
-        Fajr: ${t.Fajr}<br>
-        Dhuhr: ${t.Dhuhr}<br>
-        Asr: ${t.Asr}<br>
-        Maghrib: ${t.Maghrib}<br>
-        Isha: ${t.Isha}<br>
-        <button onclick="this.parentElement.classList.add('hidden')">Close</button>
-      `;
+      alert(`Fajr:${t.Fajr}\nDhuhr:${t.Dhuhr}\nAsr:${t.Asr}\nMaghrib:${t.Maghrib}\nIsha:${t.Isha}`);
     });
   });
 }
@@ -343,10 +182,24 @@ function showNamaz(){
 // 🧭 QIBLA
 // ============================
 function showQibla(){
-  let panel = document.getElementById("qiblaPanel");
-  panel.classList.remove("hidden");
-
   window.addEventListener("deviceorientation", e=>{
-    document.getElementById("compass").style.transform = `rotate(${e.alpha}deg)`;
+    alert("Rotate device for Qibla 🧭");
   });
 }
+
+// ============================
+// 📂 SIDEBAR CONTROL
+// ============================
+function openSidebar(){
+  document.getElementById("sidebar").classList.add("active");
+}
+function closeSidebar(){
+  document.getElementById("sidebar").classList.remove("active");
+}
+
+// ============================
+// 🚀 INIT
+// ============================
+window.onload = ()=>{
+  loadQuran();
+};
