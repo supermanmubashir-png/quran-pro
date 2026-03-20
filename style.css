@@ -1,87 +1,76 @@
 body {
-  margin:0;
-  font-family:sans-serif;
-  color:white;
-  background:linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#000);
-  background-size:400% 400%;
-  animation:bg 10s infinite;
+  margin: 0;
+  font-family: sans-serif;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: white;
 }
 
-@keyframes bg {
-  0%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-  100%{background-position:0% 50%}
-}
-
-.header {
-  display:flex;
-  justify-content:space-between;
-  padding:10px;
-  background:rgba(0,0,0,0.4);
-}
-
-.sidebar {
-  position:fixed;
-  left:-260px;
-  width:250px;
-  height:100%;
-  background:#000;
-  overflow:auto;
-  transition:.3s;
-  padding:10px;
-}
-
-.sidebar.active { left:0; }
-
-#overlay {
-  position:fixed;
-  width:100%;
-  height:100%;
-  display:none;
-  background:rgba(0,0,0,0.5);
-}
-#overlay.active { display:block; }
-
-.surah { padding:10px; border-bottom:1px solid #444; }
-
-.ayah { padding:15px; border-bottom:1px solid #555; }
-
-.arabic { font-size:22px; text-align:right; }
-
-.panel {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-
-  background: rgba(0,0,0,0.95); /* solid clean */
-  backdrop-filter: none; /* ❌ REMOVE BLUR */
-
+/* MAIN CONTENT */
+#content {
   padding: 15px;
-  border-top: 1px solid #444;
+  margin-left: 0;
 }
 
-.hidden { display:none; }
-.panel {
+/* AYAH */
+.ayah {
+  background: rgba(255,255,255,0.05);
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.arabic {
+  font-size: 22px;
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+/* BUTTONS */
+.controls button {
+  margin: 3px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 6px;
+  background: #00c853;
+  color: white;
+  cursor: pointer;
+}
+
+/* SIDEBAR */
+#sidebar {
   position: fixed;
+  left: -260px;
   top: 0;
-  right: 0;
-  width: 80%;
+  width: 250px;
   height: 100%;
   background: #111;
-  color: white;
-  padding: 20px;
-  z-index: 999;
   overflow-y: auto;
-  display: none;
+  transition: 0.3s;
+  z-index: 1000;
 }
 
-.settingsBtn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  font-size: 24px;
+#sidebar.active {
+  left: 0;
+}
+
+#sidebar .surah {
+  padding: 10px;
+  border-bottom: 1px solid #333;
+  cursor: pointer;
+}
+
+/* TOP BAR */
+.topbar {
+  display: flex;
+  justify-content: space-between;
   padding: 10px;
 }
+
+/* FLOAT BUTTONS */
+button {
+  cursor: pointer;
+}
+
 .floatingBtn {
   position: fixed;
   right: 15px;
@@ -94,27 +83,7 @@ body {
   color: white;
 }
 
-.panel {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background: #111;
-  padding: 15px;
-  max-height: 60%;
-  overflow-y: auto;
-}
-
-.hidden {
-  display: none;
-}
-
-.translation {
-  font-size: 16px;
-  opacity: 0.8;
-}
-
-#compass {
-  font-size: 50px;
-  text-align: center;
-  margin-top: 20px;
+/* DARK MODE */
+.dark {
+  background: black;
 }
